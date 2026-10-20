@@ -24,8 +24,10 @@ import (
 )
 
 const (
-	// GitHubRepo is the repository to check for updates
-	GitHubRepo = "asheshgoplani/agent-deck"
+	// DefaultGitHubRepo is the repository whose releases this build updates
+	// from: the nirokato fork, so an update never swaps in an upstream binary
+	// that lacks the fork's patches.
+	DefaultGitHubRepo = "nirokato/agent-deck"
 
 	// CacheFileName stores the last update check result
 	CacheFileName = "update-cache.json"
@@ -44,6 +46,10 @@ var checkInterval = DefaultCheckInterval
 // against a fake release server (sandboxed end-to-end proofs of the update
 // flow) without ever pointing it at the real GitHub API.
 var apiBaseURL = envOr("AGENTDECK_GITHUB_API_BASE_URL", "https://api.github.com")
+
+// GitHubRepo is the owner/name checked for releases. AGENTDECK_UPDATE_REPO
+// overrides it, e.g. to point a build back at asheshgoplani/agent-deck.
+var GitHubRepo = envOr("AGENTDECK_UPDATE_REPO", DefaultGitHubRepo)
 
 // envOr returns the trimmed value of the named env var, or fallback when
 // unset or blank.
